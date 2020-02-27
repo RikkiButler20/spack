@@ -1224,7 +1224,8 @@ class PackageBase(with_metaclass(PackageMeta, PackageViewMixin, object)):
 
         start_time = time.time()
         checksum = spack.config.get('config:checksum')
-        if checksum and self.version not in self.versions:
+        fetch = self.stage.managed_by_spack
+        if checksum and fetch and self.version not in self.versions:
             tty.warn("There is no checksum on file to fetch %s safely." %
                      self.spec.cformat('{name}{@version}'))
 
