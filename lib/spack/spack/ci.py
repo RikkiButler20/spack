@@ -519,10 +519,13 @@ def generate_gitlab_ci_yaml(env, print_summary, output_file,
                             prune_dag=False, check_index_only=False,
                             run_optimizer=False, use_dependencies=False,
                             artifacts_root=None):
+    tty.warn('entering function')
     with spack.concretize.disable_compiler_existence_check():
         with env.write_transaction():
             env.concretize()
+            tty.warn('concretized')
             env.write()
+            assert os.path.exists(os.path.join(env.path, 'spack.lock'))
 
     yaml_root = ev.config_dict(env.yaml)
 
