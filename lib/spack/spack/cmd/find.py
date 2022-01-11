@@ -201,6 +201,16 @@ def display_env(env, args, decorator):
         print()
 
 
+def filter_loaded_specs(specs):
+    """Filter a list of specs returning only those that are currently loaded."""
+    hashes = os.environ.get(uenv.spack_loaded_hashes_var, '').split(':')
+    return [x for x in specs if x.dag_hash() in hashes]
+
+
+def print_how_many_pkgs(specs, pkg_type=""):
+    tty.msg("%s" % plural(len(specs), pkg_type + " package"))
+
+
 def find(parser, args):
     if args.bootstrap:
         bootstrap_store_path = spack.bootstrap.store_path()
