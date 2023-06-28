@@ -502,6 +502,7 @@ spack:
         spec = Spec("hypre~~shared ^openblas")
         spec.concretize()
 
+        assert spec.satisfies("^perl~shared")
         assert spec.satisfies("^openblas~shared")
         assert spec.satisfies("^zlib~shared")
 
