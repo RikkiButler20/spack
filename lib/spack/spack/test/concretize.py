@@ -17,7 +17,6 @@ import spack.compilers
 import spack.concretize
 import spack.config
 import spack.detection
-import spack.environment as ev
 import spack.error
 import spack.hash_types as ht
 import spack.platforms
@@ -28,8 +27,6 @@ from spack.concretize import find_spec
 from spack.main import SpackCommand
 from spack.spec import CompilerSpec, Spec
 from spack.version import Version, ver
-
-env = SpackCommand("env")
 
 
 def check_spec(abstract, concrete):
@@ -481,9 +478,9 @@ spack:
 """
                 )
 
-        env("create", "test", str(path))
+        SpackCommand("env")("create", "test", str(path))
 
-        test = ev.read("test")
+        test = spack.environment.read("test")
         test.unify = unify
         test.concretize()
 
