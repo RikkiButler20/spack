@@ -525,9 +525,8 @@ class TestConcretize:
         assert not spec.satisfies("^a foo=bar")
         assert not spec.satisfies("^b foo=bar")
 
-    @pytest.mark.skipif(
-        os.environ.get("SPACK_TEST_SOLVER") == "original",
-        reason="Optional compiler propagation isn't deprecated for original concretizer",
+    @pytest.mark.only_clingo(
+        "Optional compiler propagation isn't deprecated for original concretizer"
     )
     def test_concretize_propagate_specified_variant(self):
         """Test that only the specified variant is propagated to the dependencies"""
