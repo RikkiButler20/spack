@@ -315,7 +315,6 @@ def _matching_specs(specs: List[Spec]) -> List[Spec]:
     return [spack.cmd.disambiguate_spec(s, ev.active_environment(), installed=any) for s in specs]
 
 
-<<<<<<< HEAD
 def _format_spec(spec: Spec) -> str:
     return spec.cformat("{name}{@version}{/hash:7}")
 
@@ -332,9 +331,6 @@ def _make_pool():
 
 
 def push_fn(args):
-=======
-def push_fn(args: argparse.Namespace):
->>>>>>> ed3a2ac586 (spack buildcache: fix a typo in a function call (#40446))
     """create a binary package and push it to a mirror"""
     if args.spec_file:
         tty.warn(
@@ -923,15 +919,8 @@ def check_fn(args: argparse.Namespace):
     else:
         specs_arg = args.specs
 
-<<<<<<< HEAD
     if specs_arg:
         specs = _matching_specs(spack.cmd.parse_specs(specs_arg))
-=======
-    specs = spack.cmd.parse_specs(args.spec or args.spec_file)
-
-    if specs:
-        specs = _matching_specs(specs)
->>>>>>> ed3a2ac586 (spack buildcache: fix a typo in a function call (#40446))
     else:
         specs = spack.cmd.require_active_env("buildcache check").all_specs()
 
