@@ -78,6 +78,12 @@ class Clingo(CMakePackage):
         patch("setuptools-2.patch")
         depends_on("py-setuptools", type="build")
 
+    # TODO: Simplify this after Spack 0.21 release. The old concretizer has problems with
+    # py-setuptools ^python@3.6, so we only apply the distutils -> setuptools patch for Python 3.12
+    with when("@:5.6.1 ^python@3.12:"):
+        patch("setuptools.patch")
+        depends_on("py-setuptools", type="build")
+
     def patch(self):
         # Doxygen is optional but can't be disabled with a -D, so patch
         # it out if it's really supposed to be disabled
