@@ -5,6 +5,10 @@
 import os
 import re
 import sys
+from contextlib import contextmanager
+from typing import Callable
+
+from llnl.util.lang import nullcontext
 
 import spack.build_environment
 import spack.config
