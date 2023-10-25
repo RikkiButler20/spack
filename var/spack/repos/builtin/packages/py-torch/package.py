@@ -287,6 +287,14 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         working_dir="third_party/breakpad",
     )
 
+    # https://github.com/pytorch/pytorch/issues/70297
+    patch(
+        "https://github.com/google/breakpad/commit/605c51ed96ad44b34c457bbca320e74e194c317e.patch?full_index=1",
+        sha256="694d83db3a2147d543357f22ba5c8d5683d0ed43e693d42bca8f24ec50080f98",
+        when="+breakpad",
+        working_dir="third_party/breakpad",
+    )
+
     # Fixes CMake configuration error when XNNPACK is disabled
     # https://github.com/pytorch/pytorch/pull/35607
     # https://github.com/pytorch/pytorch/pull/37865
