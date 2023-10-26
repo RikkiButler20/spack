@@ -78,6 +78,7 @@ def setup_parser(subparser):
         "  `spack checksum zlib@1.2` autodetects versions 1.2.0 to 1.2.13 from the remote\n"
         "  `spack checksum zlib 1.2.13` checksums exact version 1.2.13 directly without search\n"
     )
+    arguments.add_common_arguments(subparser, ["jobs"])
 
 
 def checksum(parser, args):
