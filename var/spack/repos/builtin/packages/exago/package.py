@@ -69,7 +69,6 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
     conflicts(
         "+python", when="+ipopt+rocm", msg="Python bindings require -fPIC with Ipopt for rocm."
     )
-    variant("logging", default=False, description="Enable/Disable spdlog based logging")
 
     # Adds ExaGO's python wrapper to PYTHONPATH
     extends("python", when="+python")
