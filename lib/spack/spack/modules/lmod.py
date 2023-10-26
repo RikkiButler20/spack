@@ -284,6 +284,13 @@ class LmodFileLayout(BaseFileLayout):
         """Returns the modulerc file associated with current module file"""
         return os.path.join(os.path.dirname(self.filename), f".modulerc.{self.extension}")
 
+    @property
+    def modulerc(self):
+        """Returns the modulerc file associated with current module file"""
+        return os.path.join(
+            os.path.dirname(self.filename), ".".join([".modulerc", self.extension])
+        )
+
     def token_to_path(self, name, value):
         """Transforms a hierarchy token into the corresponding path part.
 
@@ -478,6 +485,10 @@ class LmodModulefileWriter(BaseModuleFileWriter):
     default_template = "modules/modulefile.lua"
 
     modulerc_header = []
+
+    hide_cmd_format = 'hide_version("%s")'
+
+    modulerc_header: list = []
 
     hide_cmd_format = 'hide_version("%s")'
 
