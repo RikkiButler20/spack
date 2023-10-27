@@ -381,6 +381,8 @@ def push_fn(args):
         dependencies="dependencies" in args.things_to_install,
     )
 
+    url = args.mirror.push_url
+
     # When pushing multiple specs, print the url once ahead of time, as well as how
     # many specs are being pushed.
     if len(specs) > 1:
