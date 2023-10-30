@@ -8,7 +8,6 @@ import copy
 import enum
 import itertools
 import os
-import pathlib
 import pprint
 import re
 import sys
