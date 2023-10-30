@@ -64,6 +64,8 @@ class PyPandas(PythonPackage):
 
     variant("excel", when="@1.4:", default=False, description="Build with support for Excel")
 
+    variant("excel", when="@1.4:", default=False, description="Build with support for Excel")
+
     # Required dependencies
     # https://pandas.pydata.org/pandas-docs/stable/getting_started/install.html#python-version-support
     depends_on("python@3.9:3.12", when="@2.1.1:", type=("build", "run"))
