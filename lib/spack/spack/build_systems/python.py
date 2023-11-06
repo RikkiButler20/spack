@@ -26,7 +26,6 @@ import spack.store
 from spack.directives import build_system, depends_on, extends, maintainers
 from spack.error import NoHeadersError, NoLibrariesError
 from spack.install_test import test_part
-from spack.util.executable import Executable
 
 from ._checks import BaseBuilder, execute_install_time_tests
 
@@ -517,31 +516,6 @@ class PythonPipBuilder(BaseBuilder):
         python is external."""
         return os.path.join(self.spec.package.stage.path, "build_env")
 
-    @property
-    def _build_venv_python(self) -> Executable:
-        """Return the Python executable in the build virtual environment when
-        python is external."""
-        return Executable(os.path.join(self._build_venv_path, "bin", "python"))
-
-    def install(self, pkg, spec, prefix):
-        """Install everything from build directory."""
-        python: Executable = spec["python"].command
-        # Since we invoke pip with --no-build-isolation, we have to make sure that pip cannot
-        # execute hooks from user and system site-packages.
-        if spec["python"].external:
-            # There are no environment variables to disable the system site-packages, so we use a
-            # virtual environment instead. The downside of this approach is that pip produces
-            # incorrect shebangs that refer to the virtual environment, which we have to fix up.
-            python("-m", "venv", "--without-pip", self._build_venv_path)
-            pip = self._build_venv_python
-        else:
-            # For a Spack managed Python, system site-packages is empty/unused by design, so it
-            # suffices to disable user site-packages, for which there is an environment variable.
-            pip = python
-            pip.add_default_env("PYTHONNOUSERSITE", "1")
-        pip.add_default_arg("-m")
-        pip.add_default_arg("pip")
-
         args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
 
         for setting in _flatten_dict(self.config_settings(spec, prefix)):
@@ -556,6 +530,14 @@ class PythonPipBuilder(BaseBuilder):
         else:
             args.append(".")
 
+        pip = spec["python"].command
+        # Hide user packages, since we don't have build isolation. This is
+        # necessary because pip / setuptools may run hooks from arbitrary
+        # packages during the build. There is no equivalent variable to hide
+        # system packages, so this is not reliable for external Python.
+        pip.add_default_env("PYTHONNOUSERSITE", "1")
+        pip.add_default_arg("-m")
+        pip.add_default_arg("pip")
         with fs.working_dir(self.build_directory):
             pip(*args)
 

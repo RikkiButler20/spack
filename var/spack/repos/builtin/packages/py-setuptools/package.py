@@ -69,9 +69,14 @@ class PySetuptools(PythonPackage):
     depends_on("python@2.7:2.8,3.5:", when="@44", type=("build", "run"))
     depends_on("python@2.7:2.8,3.4:", when="@:43", type=("build", "run"))
 
-    # Newer pip requires setuptools to be installed, before building
-    # setuptools. This issue was fixed or worked around in setuptools 54+
-    depends_on("py-pip@:18", when="@:53", type="build")
+    # Uses HTMLParser.unescape
+    depends_on("python@:3.8", when="@:41.0", type=("build", "run"))
+
+    # Uses collections.MutableMapping
+    depends_on("python@:3.9", when="@:40.4.2", type=("build", "run"))
+
+    # https://github.com/pypa/setuptools/issues/3661
+    depends_on("python@:3.11", when="@:67", type=("build", "run"))
 
     # Uses HTMLParser.unescape
     depends_on("python@:3.8", when="@:41.0", type=("build", "run"))
