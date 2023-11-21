@@ -522,16 +522,12 @@ class BaseConfiguration:
     def hidden(self):
         """Returns True if the module has been hidden, False otherwise."""
 
-        # A few variables for convenience of writing the method
-        spec = self.spec
         conf = self.module.configuration(self.name)
 
-        hidden_as_implicit = not self.explicit and conf.get(
-            "hide_implicits", conf.get("exclude_implicits", False)
-        )
+        hidden_as_implicit = not self.explicit and conf.get("hide_implicits", False)
 
         if hidden_as_implicit:
-            tty.debug(f"\tHIDDEN_AS_IMPLICIT : {spec.cshort_spec}")
+            tty.debug(f"\tHIDDEN_AS_IMPLICIT : {self.spec.cshort_spec}")
 
         return hidden_as_implicit
 

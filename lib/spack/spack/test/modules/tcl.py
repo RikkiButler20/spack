@@ -436,14 +436,14 @@ class TestTcl:
         mpileaks_specs = database.query("mpileaks")
         for item in mpileaks_specs:
             writer = writer_cls(item, "default")
-            assert not writer.conf.hidden
+            assert not writer.conf.excluded
 
         # callpath is a dependency of mpileaks, and has been pulled
         # in implicitly
         callpath_specs = database.query("callpath")
         for item in callpath_specs:
             writer = writer_cls(item, "default")
-            assert writer.conf.hidden
+            assert writer.conf.excluded
 
     @pytest.mark.regression("12105")
     def test_hide_implicits_with_arg(self, module_configuration):
@@ -453,13 +453,13 @@ class TestTcl:
         mpileaks_spec = spack.spec.Spec("mpileaks")
         mpileaks_spec.concretize()
         writer = writer_cls(mpileaks_spec, "default", True)
-        assert not writer.conf.hidden
+        assert not writer.conf.excluded
 
         # callpath is defined as implicit with explicit argument set on writer
         callpath_spec = spack.spec.Spec("callpath")
         callpath_spec.concretize()
         writer = writer_cls(callpath_spec, "default", False)
-        assert writer.conf.hidden
+        assert writer.conf.excluded
 
     @pytest.mark.regression("9624")
     @pytest.mark.db

@@ -139,7 +139,7 @@ class Catch2(CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        args = []
+        args = [self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd")]
         # 1.7.0-1.9.3: no control over test builds
         if spec.satisfies("@1.9.4:2.1.0"):
             args.append("-DNO_SELFTEST={0}".format("OFF" if self.run_tests else "ON"))
