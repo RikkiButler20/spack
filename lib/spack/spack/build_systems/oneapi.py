@@ -215,6 +215,35 @@ class IntelOneApiLibraryPackageWithSdk(IntelOneApiPackage):
         return find_libraries("*", self.component_prefix.sdk.lib64)
 
 
+class IntelOneApiLibraryPackageWithSdk(IntelOneApiPackage):
+    """Base class for Intel oneAPI library packages with SDK components.
+
+    Contains some convenient default implementations for libraries
+    that expose functionality in sdk subdirectories.
+    Implement the method directly in the package if something
+    different is needed.
+
+    """
+
+    @property
+    def include(self):
+        return join_path(self.component_prefix, "sdk", "include")
+
+    @property
+    def headers(self):
+        return find_headers("*", self.include, recursive=True)
+
+    @property
+    def lib(self):
+        lib_path = join_path(self.component_prefix, "sdk", "lib64")
+        lib_path = lib_path if isdir(lib_path) else dirname(lib_path)
+        return lib_path
+
+    @property
+    def libs(self):
+        return find_libraries("*", root=self.lib, shared=True, recursive=True)
+
+
 class IntelOneApiStaticLibraryList:
     """Provides ld_flags when static linking is needed
 

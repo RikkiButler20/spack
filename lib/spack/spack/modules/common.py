@@ -519,6 +519,22 @@ class BaseConfiguration:
         return hidden_as_implicit
 
     @property
+<<<<<<< HEAD
+=======
+    def hidden(self):
+        """Returns True if the module has been hidden, False otherwise."""
+
+        conf = self.module.configuration(self.name)
+
+        hidden_as_implicit = not self.explicit and conf.get("hide_implicits", False)
+
+        if hidden_as_implicit:
+            tty.debug(f"\tHIDDEN_AS_IMPLICIT : {self.spec.cshort_spec}")
+
+        return hidden_as_implicit
+
+    @property
+>>>>>>> 3408b4a100 (Merge upstream)
     def context(self):
         return self.conf.get("context", {})
 
