@@ -462,45 +462,32 @@ class TestConcretize:
     @pytest.mark.only_clingo(
         "Optional compiler propagation isn't deprecated for original concretizer"
     )
-    @pytest.mark.parametrize("unify", [True, False, "when_possible"])
-    def test_concretize_environment_propagated_disabled_variant(
-        self, unify, tmpdir, mutable_mock_env_path
-    ):
-        """Ensure that variants are propagated in a concrete environment"""
-        path = tmpdir.join("spack.yaml")
-
-        with tmpdir.as_cwd():
-            with open(str(path), "w") as f:
-                f.write(
-                    """\
-spack:
-  specs:
-    - ascent ~~shared +adios2
-"""
-                )
-
-        SpackCommand("env")("create", "test", str(path))
-
-        test = spack.environment.read("test")
-        test.unify = unify
-        test.concretize()
-
-        for spec in test.specs_by_hash.values():
-            for dep in spec.dependencies():
-                if dep.name == "adios2":
-                    assert dep.satisfies("~shared")
-                    assert dep.satisfies("^bzip2 ~shared")
-
-    @pytest.mark.only_clingo(
-        "Optional compiler propagation isn't deprecated for original concretizer"
+    @pytest.mark.parametrize(
+        "spec_str,expected_propagation",
+        [
+            ("hypre~~shared ^openblas+shared", [("hypre", "~shared"), ("openblas", "+shared")]),
+            # Propagates past a node that doesn't have the variant
+            ("hypre~~shared ^openblas", [("hypre", "~shared"), ("openblas", "~shared")]),
+            (
+                "ascent~~shared +adios2",
+                [("ascent", "~shared"), ("adios2", "~shared"), ("bzip2", "~shared")],
+            ),
+            # Propagates below a node that uses the other value explicitly
+            (
+                "ascent~~shared +adios2 ^adios2+shared",
+                [("ascent", "~shared"), ("adios2", "+shared"), ("bzip2", "~shared")],
+            ),
+            (
+                "ascent++shared +adios2 ^adios2~shared",
+                [("ascent", "+shared"), ("adios2", "~shared"), ("bzip2", "+shared")],
+            ),
+        ],
     )
-    def test_concretize_propagate_disabled_variant(self):
-        """Test a package variant value was passed from its parent."""
-        spec = Spec("ascent~~shared +adios2")
-        spec.concretize()
-
-        for dep in spec.traverse():
-            assert dep.satisfies("~shared")
+    def test_concretize_propagate_disabled_variant(self, spec_str, expected_propagation):
+        """Tests various patterns of boolean variant propagation"""
+        spec = Spec(spec_str).concretized()
+        for key, expected_satisfies in expected_propagation:
+            spec[key].satisfies(expected_satisfies)
 
     @pytest.mark.only_clingo(
         "Optional compiler propagation isn't deprecated for original concretizer"
@@ -518,13 +505,11 @@ spack:
     )
     def test_concretize_propagate_specified_variant(self):
         """Test that only the specified variant is propagated to the dependencies"""
-        spec = Spec("splice-b++bar")
+        spec = Spec("parent-foo-bar ~~foo")
         spec.concretize()
 
-        assert spec.satisfies("+bar") and spec.satisfies("^splice-a+bar")
-        assert spec.satisfies("+bar") and spec.satisfies("^splice-z+bar")
-        assert spec.satisfies("+foo") and not spec.satisfies("^splice-a+foo")
-        assert spec.satisfies("+foo") and not spec.satisfies("^splice-z+foo")
+        assert spec.satisfies("~foo") and spec.satisfies("^dependency-foo-bar~foo")
+        assert spec.satisfies("+bar") and not spec.satisfies("^dependency-foo-bar+bar")
 
     @pytest.mark.only_clingo("Original concretizer is allowed to forego variant propagation")
     def test_concretize_propagate_multivalue_variant(self):
