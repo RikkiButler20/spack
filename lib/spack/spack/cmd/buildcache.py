@@ -429,8 +429,6 @@ def push_fn(args):
     if not args.private:
         specs = _skip_no_redistribute_for_public(specs)
 
-    url = args.mirror.push_url
-
     # When pushing multiple specs, print the url once ahead of time, as well as how
     # many specs are being pushed.
     if len(specs) > 1:
